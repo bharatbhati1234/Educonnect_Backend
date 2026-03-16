@@ -1,0 +1,68 @@
+
+// server.js file --------------------------------------------------------
+
+/**
+ * main file of EduConnect backend server.
+ * Initializes Express, connects database and loads all API routes.
+ */
+
+// npm init -y
+// npm i express
+// npm i nodemon
+// npm install --save-dev @babel/core @babel/cli @babel/preset-env
+// npm install mongoose
+// npm install dotenv
+// npm i express-validator
+// npm install multer
+// npm install bcrypt
+// npm install jsonwebtoken
+// npm install nodemailer
+
+
+import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import authRoute from "./routes/authRoute.js";   // register/login route import kiya hai 
+import categoryRoute from "./routes/categoryRoute.js" // category ka route import kiya hai 
+import instructorRoute from "./routes/instructorRoute.js" // instructor ka route import kiya hai 
+import path from "path";
+
+
+dotenv.config();
+
+const app = express();
+
+// middleware
+app.use(express.json());   
+
+// serve uploaded images
+app.use("/uploads", express.static("uploads"));
+
+
+// connect database
+connectDB();
+
+const PORT = process.env.PORT || 5000;
+
+// test route
+app.get("/", (req, res) => {
+  res.send("Express server is connected");
+});
+
+
+// API routes
+app.use("/api/auth",authRoute);
+app.use("/api/",categoryRoute);
+app.use("/api/",instructorRoute);
+
+
+
+// server calling 
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+
+
+
