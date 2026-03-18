@@ -26,7 +26,7 @@ const courseSchema = new mongoose.Schema({
 
   level: {
     type: String,
-    enum: ["Beginner","Intermediate","Advanced"]
+    enum: ["Beginner", "Intermediate", "Advanced"]
   },
 
   duration: {
@@ -61,6 +61,13 @@ const courseSchema = new mongoose.Schema({
     ref: "Lesson"
   }],
 
+  sections: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Section"
+    }
+  ],
+
   students: {
     type: Number,
     default: 0
@@ -81,8 +88,8 @@ const courseSchema = new mongoose.Schema({
     default: false
   }
 
-},{
-  timestamps:true
+}, {
+  timestamps: true
 })
 
-export default mongoose.model("Course",courseSchema)
+export default mongoose.model("Course", courseSchema)

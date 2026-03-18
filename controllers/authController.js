@@ -32,6 +32,8 @@ export const registerUser = async (req, res) => {
             password: hashedPassword
         });
 
+        user.password = undefined; // hide password 
+
         res.status(201).json({
             success: true,
             message: "User registered successfully",
@@ -79,6 +81,7 @@ export const loginUser = async (req, res) => {
             success: true,
             message: "Login successfully",
             token: generateToken(user),
+            user
 
         })
     } catch (error) {

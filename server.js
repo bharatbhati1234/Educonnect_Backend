@@ -26,6 +26,11 @@ import authRoute from "./routes/authRoute.js";   // register/login route import 
 import categoryRoute from "./routes/categoryRoute.js" // category ka route import kiya hai 
 import instructorRoute from "./routes/instructorRoute.js" // instructor ka route import kiya hai 
 import path from "path";
+import courseRoute from "./routes/courseRoute.js"  // course ka route import kiya hai 
+import lessonRoute from "./routes/lessonRoute.js" // lesson ka route import kiya hai 
+import sectionRoute from "./routes/sectionRoute.js" // section ka route import kiya hai 
+import enrollmentRoutes from "./routes/enrollmentRoute.js";   // enrollment ka route import kiya hai 
+
 
 
 dotenv.config();
@@ -54,6 +59,10 @@ app.get("/", (req, res) => {
 app.use("/api/auth",authRoute);
 app.use("/api/",categoryRoute);
 app.use("/api/",instructorRoute);
+app.use("/api/",courseRoute);
+app.use("/api/",lessonRoute);
+app.use("/api/",sectionRoute);
+app.use("/api/",enrollmentRoutes);
 
 
 
