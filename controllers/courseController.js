@@ -36,7 +36,7 @@ export const createCourse = async (req, res) => {
       duration,
       language,
       category,
-      instructor,
+      instructor: req.user._id,
       certificate,
       introVideo,
       thumbnail
@@ -103,6 +103,42 @@ export const getCourseById = async (req, res) => {
 };
 
 
+// GET COURSES BY CATEGORY
+export const getCoursesByCategory = async (req, res) => {
+  try {
+    const courses = await Course.find({ category: req.params.id })
+      .populate("category")
+      .populate("instructor");
+
+    res.json({
+      success: true,
+      courses
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// GET COURSES BY INSTRUCTOR
+export const getCoursesByInstructor = async (req, res) => {
+  try {
+    const courses = await Course.find({ instructor: req.params.id })
+      .populate("category")
+      .populate("instructor");
+
+    res.json({
+      success: true,
+      courses
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 // UPDATE COURSE
 export const updateCourse = async (req, res) => {
@@ -129,7 +165,7 @@ export const updateCourse = async (req, res) => {
       duration,
       language,
       category,
-      instructor,
+      instructor: req.user._id,
       certificate,
       introVideo
     };
@@ -166,6 +202,40 @@ export const deleteCourse = async (req, res) => {
     res.json({
       success: true,
       message: "Course deleted successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+export const forgotPassword = async (req, res) => {
+  try {
+
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    // generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.resetOtp = otp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "OTP generated",
+      otp // ⚠️ abhi testing ke liye bhej rahe
     });
 
   } catch (error) {

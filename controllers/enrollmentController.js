@@ -2,17 +2,22 @@
 
 
 // Enrollment Controller Handles course enrollment and fetching enrolled courses
- 
+
+
+// Enrollment Controller
 
 import Enrollment from "../models/Enrollment.js";
 import Lesson from "../models/Lesson.js";
+import Section from "../models/Section.js";
+import Course from "../models/Course.js"; 
 
 
 // ENROLL USER IN COURSE
 export const enrollCourse = async (req, res) => {
   try {
 
-    const { userId, courseId } = req.body;
+    const { courseId } = req.body;
+    const userId = req.user._id;
 
     // Check already enrolled
     const existing = await Enrollment.findOne({
@@ -31,6 +36,11 @@ export const enrollCourse = async (req, res) => {
       course: courseId
     });
 
+    // UPDATE STUDENT COUNT
+    await Course.findByIdAndUpdate(courseId, {
+      $inc: { students: 1 }
+    });
+
     res.status(201).json({
       success: true,
       enrollment
@@ -43,12 +53,12 @@ export const enrollCourse = async (req, res) => {
 
 
 
-// GET MY COURSES
+// GET MY COURSES (SECURE)
 export const getMyCourses = async (req, res) => {
   try {
 
     const enrollments = await Enrollment.find({
-      user: req.params.userId
+      user: req.user._id
     }).populate("course");
 
     res.json({
@@ -82,9 +92,13 @@ export const getCourseStudents = async (req, res) => {
 };
 
 
+
+// MARK LESSON COMPLETE 
 export const markLessonComplete = async (req, res) => {
   try {
-    const { userId, courseId, lessonId } = req.body;
+
+    const { courseId, lessonId } = req.body;
+    const userId = req.user._id; 
 
     const enrollment = await Enrollment.findOne({
       user: userId,
@@ -102,13 +116,22 @@ export const markLessonComplete = async (req, res) => {
 
     enrollment.completedLessons.push(lessonId);
 
-    // total lessons count
-    const totalLessons = await Lesson.countDocuments({
-      course: courseId
-    });
+    // TOTAL LESSON COUNT
+    const sections = await Section.find({ course: courseId });
 
-    enrollment.progress =
-      (enrollment.completedLessons.length / totalLessons) * 100;
+    let totalLessons = 0;
+
+    for (let sec of sections) {
+      totalLessons += sec.lessons.length;
+    }
+
+    // avoid divide by zero
+    if (totalLessons === 0) {
+      enrollment.progress = 0;
+    } else {
+      enrollment.progress =
+        (enrollment.completedLessons.length / totalLessons) * 100;
+    }
 
     await enrollment.save();
 
@@ -124,14 +147,23 @@ export const markLessonComplete = async (req, res) => {
 
 
 
+// GET PROGRESS
 export const getProgress = async (req, res) => {
   try {
-    const { userId, courseId } = req.params;
+
+    const { courseId } = req.params;
+    const userId = req.user._id; // ✅ SECURITY FIX
 
     const enrollment = await Enrollment.findOne({
       user: userId,
       course: courseId
     }).populate("completedLessons");
+
+    if (!enrollment) {
+      return res.status(404).json({
+        message: "Not enrolled"
+      });
+    }
 
     res.json({
       success: true,
@@ -143,3 +175,6 @@ export const getProgress = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+

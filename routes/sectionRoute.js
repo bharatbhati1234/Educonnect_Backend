@@ -13,10 +13,13 @@ import {
   updateSection,
   deleteSection
 } from "../controllers/sectionController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import roleMiddleware from "../middleware/roleMiddleware.js";
+
 
 const router = express.Router();
 
-router.post("/createsection", createSection);
+router.post("/createsection", authMiddleware, roleMiddleware("admin", "instructor"), createSection);
 
 router.get("/getallsections", getAllSections);
 
@@ -24,9 +27,9 @@ router.get("/getsectionbycourseid/:courseId", getSections);
 
 router.get("/getsinglesection/:id", getSingleSection);
 
-router.put("/updatesectionbyid/:id", updateSection);
+router.put("/updatesectionbyid/:id",authMiddleware, roleMiddleware("admin", "instructor"), updateSection);
 
-router.delete("/deletesectionbyid/:id", deleteSection);
+router.delete("/deletesectionbyid/:id",authMiddleware, roleMiddleware("admin", "instructor"), deleteSection);
 
 export default router;
 

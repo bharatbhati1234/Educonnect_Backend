@@ -11,16 +11,26 @@ import {
   getProgress
 } from "../controllers/enrollmentController.js";
 
+import authMiddleware from "../middleware/authMiddleware.js";
+import roleMiddleware from "../middleware/roleMiddleware.js";
+
+
+
 const router = express.Router();
 
-router.post("/enroll", enrollCourse);
+router.post("/enroll", authMiddleware, enrollCourse);
 
-router.get("/getenrollcourse/:userId", getMyCourses);
+router.get("/my-courses", authMiddleware, getMyCourses);
 
-router.get("/course-students/:courseId", getCourseStudents);
+router.get(
+  "/course-students/:courseId",
+  authMiddleware,
+  roleMiddleware("admin", "instructor"),
+  getCourseStudents
+);
 
-router.post("/enrollments/complete-lesson",markLessonComplete);
+router.post("/enrollments/complete-lesson", authMiddleware, markLessonComplete);
 
-router.get("/progress/:userId/:courseId",getProgress);
+router.get("/progress/:userId/:courseId", authMiddleware, getProgress);
 
 export default router;

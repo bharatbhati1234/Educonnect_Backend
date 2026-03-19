@@ -30,6 +30,7 @@ import courseRoute from "./routes/courseRoute.js"  // course ka route import kiy
 import lessonRoute from "./routes/lessonRoute.js" // lesson ka route import kiya hai 
 import sectionRoute from "./routes/sectionRoute.js" // section ka route import kiya hai 
 import enrollmentRoutes from "./routes/enrollmentRoute.js";   // enrollment ka route import kiya hai 
+import userRoute from "./routes/userRoute.js" // user ka route import kiya hai 
 
 
 
@@ -63,6 +64,7 @@ app.use("/api/",courseRoute);
 app.use("/api/",lessonRoute);
 app.use("/api/",sectionRoute);
 app.use("/api/",enrollmentRoutes);
+app.use("/api/",userRoute);
 
 
 

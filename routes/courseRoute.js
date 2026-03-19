@@ -9,22 +9,57 @@ import {
   createCourse,
   getCourses,
   getCourseById,
+  getCoursesByCategory,
+  getCoursesByInstructor,
   updateCourse,
   deleteCourse
 } from "../controllers/courseController.js";
 
 import upload from "../middleware/courseUpload.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import roleMiddleware from "../middleware/roleMiddleware.js";
+
+
 
 const router = express.Router();
 
-router.post("/createcourse", upload.single("thumbnail"), createCourse);
+// create course (only admin/instructor)
+router.post(
+  "/createcourse",
+  authMiddleware,
+  roleMiddleware("admin", "instructor"),
+  upload.single("thumbnail"),
+  createCourse
+);
 
+// getallcourses
 router.get("/getcourses", getCourses);
 
+//get course by id
 router.get("/getcoursebyid/:id", getCourseById);
 
-router.put("/updatecoursebyid/:id", upload.single("thumbnail"), updateCourse);
 
-router.delete("/deletecoursebyid/:id", deleteCourse);
+// get courses by category 
+router.get("/category/:id", getCoursesByCategory);
+
+//get course by instructor
+router.get("/instructor/:id", getCoursesByInstructor);
+
+// update course
+router.put(
+  "/updatecoursebyid/:id",
+  authMiddleware,
+  roleMiddleware("admin", "instructor"),
+  upload.single("thumbnail"),
+  updateCourse
+);
+
+// delete course
+router.delete(
+  "/deletecoursebyid/:id",
+  authMiddleware,
+  roleMiddleware("admin"),
+  deleteCourse
+);
 
 export default router;
