@@ -12,7 +12,8 @@ import {
   getCoursesByCategory,
   getCoursesByInstructor,
   updateCourse,
-  deleteCourse
+  deleteCourse,
+  filterCourses
 } from "../controllers/courseController.js";
 
 import upload from "../middleware/courseUpload.js";
@@ -61,5 +62,10 @@ router.delete(
   roleMiddleware("admin"),
   deleteCourse
 );
+
+
+// filter,search,pagination route
+
+router.get("/filtercourses", filterCourses);
 
 export default router;

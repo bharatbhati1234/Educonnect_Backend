@@ -211,6 +211,8 @@ export const deleteCourse = async (req, res) => {
 
 
 
+// forgot password 
+
 export const forgotPassword = async (req, res) => {
   try {
 
@@ -236,6 +238,74 @@ export const forgotPassword = async (req, res) => {
       success: true,
       message: "OTP generated",
       otp // ⚠️ abhi testing ke liye bhej rahe
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// search, filter and Pagination 
+
+export const filterCourses = async (req, res) => {
+  try {
+
+    const {
+      category,
+      instructor,
+      level,
+      price,
+      search,
+      sort = "newest",
+      page = 1,
+      limit = 6
+    } = req.query;
+
+    let query = {};
+
+    // filters
+    if (category) query.category = category;
+
+    if (instructor) query.instructor = instructor;
+
+    if (level) query.level = level;
+
+    if (price === "free") query.price = 0;
+
+    if (price === "paid") query.price = { $gt: 0 };
+
+    if (search) {
+      query.title = { $regex: search, $options: "i" };
+    }
+
+    // sorting
+    let sortOption = {};
+
+    if (sort === "newest") sortOption = { createdAt: -1 };
+    if (sort === "oldest") sortOption = { createdAt: 1 };
+    if (sort === "priceLow") sortOption = { price: 1 };
+    if (sort === "priceHigh") sortOption = { price: -1 };
+
+    // pagination
+    const skip = (page - 1) * limit;
+
+    const total = await Course.countDocuments(query);
+
+    const courses = await Course.find(query)
+      .populate("category")
+      .populate("instructor")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(Number(limit));
+
+    res.json({
+      success: true,
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / limit),
+      count: courses.length,
+      courses
     });
 
   } catch (error) {
