@@ -20,9 +20,12 @@
 
 
 import express from "express";
+import cors from "cors";    /// backend ko frontend se connect kerne k liye cors 
+
 
 import dotenv from "dotenv";
 dotenv.config();
+
 
 import connectDB from "./config/db.js";
 import authRoute from "./routes/authRoute.js";   // register/login route import kiya hai 
@@ -40,11 +43,15 @@ import paymentRoute from "./routes/paymentRoute.js" // payments ka route import 
 
 const app = express();
 
+// serve uploaded images
+app.use("/uploads", express.static("uploads"));
+
+app.use(cors());   
+
+
 // middleware
 app.use(express.json());   
 
-// serve uploaded images
-app.use("/uploads", express.static("uploads"));
 
 
 // connect database
@@ -65,9 +72,9 @@ app.use("/api/",instructorRoute);
 app.use("/api/",courseRoute);
 app.use("/api/",lessonRoute);
 app.use("/api/",sectionRoute);
-app.use("/api/",enrollmentRoutes);
+app.use("/api/enrollments",enrollmentRoutes);
 app.use("/api/",userRoute);
-app.use("/api/",paymentRoute);
+app.use("/api/payment",paymentRoute);
 
 
 

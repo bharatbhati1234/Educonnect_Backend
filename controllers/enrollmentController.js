@@ -36,6 +36,8 @@ export const enrollCourse = async (req, res) => {
       course: courseId
     });
 
+    console.log("enrollment created")
+
     // UPDATE STUDENT COUNT
     await Course.findByIdAndUpdate(courseId, {
       $inc: { students: 1 }
@@ -150,9 +152,8 @@ export const markLessonComplete = async (req, res) => {
 // GET PROGRESS
 export const getProgress = async (req, res) => {
   try {
-
     const { courseId } = req.params;
-    const userId = req.user._id; // ✅ SECURITY FIX
+    const userId = req.user._id;
 
     const enrollment = await Enrollment.findOne({
       user: userId,

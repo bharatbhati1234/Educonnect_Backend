@@ -29,8 +29,8 @@ router.get(
   getCourseStudents
 );
 
-router.post("/enrollments/complete-lesson", authMiddleware, markLessonComplete);
+router.post("/complete-lesson", authMiddleware, markLessonComplete);
 
-router.get("/progress/:userId/:courseId", authMiddleware, getProgress);
+router.get("/progress/:courseId", authMiddleware, getProgress);
 
 export default router;
