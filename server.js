@@ -38,6 +38,8 @@ import sectionRoute from "./routes/sectionRoute.js" // section ka route import k
 import enrollmentRoutes from "./routes/enrollmentRoute.js";   // enrollment ka route import kiya hai 
 import userRoute from "./routes/userRoute.js" // user ka route import kiya hai 
 import paymentRoute from "./routes/paymentRoute.js" // payments ka route import kiya hai 
+import adminRoutes from "./routes/adminRoutes.js";
+
 
 
 
@@ -75,6 +77,7 @@ app.use("/api/",sectionRoute);
 app.use("/api/enrollments",enrollmentRoutes);
 app.use("/api/",userRoute);
 app.use("/api/payment",paymentRoute);
+app.use("/api/admin", adminRoutes);
 
 
 

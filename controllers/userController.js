@@ -181,7 +181,7 @@ export const resetPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    if (!user || user.resetOtp !== otp) {
+    if (user.resetOtp.toString() !== otp.toString()) {
         return res.status(400).json({ message: "Invalid OTP" });
     }
 
